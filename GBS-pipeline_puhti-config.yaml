@@ -1,0 +1,336 @@
+__default__:
+    time: 00:30:00
+    job-name:  GBSDefault
+    account: project_2003491
+    ntasks: 1
+    cpus-per-task: 1
+    mem-per-cpu: 4000
+    partition: small
+    working-directory: /scratch/project_2003491/logs/
+    nvme: 0
+    
+Step0_0_star_create_index:
+    time: 05:00:00
+    job-name:  Step0_0-StarIndex
+    cpus-per-task: 20
+    mem-per-cpu: 4000
+
+Step0_1_Concatenate_lanes:
+    time: 01:00:00
+    job-name:  Step0_1-Concatenate
+    cpus-per-task: 1
+    mem-per-cpu: 4000
+
+Step0_2_bwa_create_index:
+    time: 05:00:00
+    job-name:  Step0_2-bwaIndex
+    cpus-per-task: 1
+    mem-per-cpu: 50000
+
+star_map_reads:
+    time: 05:00:00
+    job-name:  STAR_map
+    cpus-per-task: 12
+    mem-per-cpu: 4000
+
+# Step1 - QC:
+################################################################################
+fastqc_quality_control_raw_data:
+    time: 05:00:00
+    job-name: fastqc-raw
+    cpus-per-task: 20
+multiqc_quality_control_raw_data:
+    time: 05:00:00
+    job-name: multiqc-raw
+    mem-per-cpu: 32000
+    nvme: 10
+fastqc_quality_control_concatenated_data:
+    time: 05:00:00
+    job-name: fastqc-conc
+    cpus-per-task: 20
+multiqc_quality_control_concatenated_data:
+    time: 05:00:00
+    job-name: multiqc-conc
+    mem-per-cpu: 32000
+    nvme: 10
+fastqc_quality_control_trimmed_data:
+    time: 05:00:00
+    job-name: fastqc-trimmed
+    cpus-per-task: 20
+multiqc_quality_control_trimmed_data:
+    time: 05:00:00
+    job-name: multiqc-trimmed
+    mem-per-cpu: 32000
+    nvme: 10
+    
+cutadapt_trim_reads:
+    time: 01:00:00
+    job-name:  AdapterTrimming
+    cpus-per-task: 1
+    mem-per-cpu: 4000
+
+Step2_TrimBasedOnQuality:
+    time: 02:00:00
+    job-name:  Step2
+    cpus-per-task: 20
+    mem-per-cpu: 2000
+
+Step2b_SubstituteLowQualityBases:
+    time: 02:00:00
+    job-name:  Step2b
+    cpus-per-task: 1
+    mem-per-cpu: 8000
+
+Step4_0_ClusterAndMockReference:
+    time: 0-10:00:00
+    job-name:  Step4
+    cpus-per-task: 20
+    mem-per-cpu: 3000
+    job-name:  S40_ClusterAndMock
+    
+Step4_1_minimap2_map_mockref:
+    time: 05:00:00
+    cpus-per-task: 20
+    job-name:  S41_mockVref
+    
+Step4_2_samtools_SamToSortedBamMockref:
+    time: 1-00:00:00
+    cpus-per-task: 1
+    job-name:  S42_sort
+
+Step4_3_AlignmentStatsMockVsReference:
+    time: 05:00:00
+    cpus-per-task: 1
+    job-name:  S43_sort
+
+Step4_4_SortedBamToMpileupMockVsReference:
+    time: 05:00:00
+    cpus-per-task: 20
+    job-name:  S44_sort
+    mem-per-cpu: 15000
+
+# Step4-Indexing
+################################################################################
+IndexGenome:
+    time: 01:00:00
+    job-name:  IndexMockRefGenome
+    cpus-per-task: 1
+    mem-per-cpu: 25000
+    
+IndexClusters:
+    time: 05:00:00
+    job-name:  IndexMockRefClusters
+    cpus-per-task: 1
+    mem-per-cpu: 25000
+
+IndexGenomeSam:
+    time: 01:00:00
+    job-name:  IndexMockRefGenomeSam
+    cpus-per-task: 1
+    mem-per-cpu: 25000
+    
+IndexClustersSam:
+    time: 05:00:00
+    job-name:  IndexMockRefClustersSam
+    cpus-per-task: 1
+    mem-per-cpu: 25000
+
+
+################################################################################
+
+Step5_0_AlignReadsToReference:
+    time: 05:00:00
+    job-name:  Step5_0
+    cpus-per-task: 20
+    mem-per-cpu: 15000
+
+Step5_1_SamToSortedBamReference:
+    time: 05:00:00
+    job-name:  Step5_1
+    cpus-per-task: 1
+    mem-per-cpu: 30000
+
+Step5_2_SortedBamToMpileupReference:
+    time: 05:00:00
+    job-name:  Step5_2
+    cpus-per-task: 1
+    mem-per-cpu: 30000
+
+Step5_3_AlignmentStatsReference:
+    time: 05:00:00
+    job-name:  Step5_3
+    cpus-per-task: 1
+    mem-per-cpu: 30000
+
+Step5_AlignAndProcessReads:
+    time: 05:00:00
+    job-name:  Step5
+    cpus-per-task: 20
+    mem-per-cpu: 15000
+
+Step5b_AlignReadsToGenome:
+    time: 01:00:00
+    job-name:  Step5b
+    cpus-per-task: 20
+    mem-per-cpu: 5000
+    
+Step5c_AlignReadsToClusters:
+    time: 01:00:00
+    job-name:  Step5c
+    cpus-per-task: 20
+    mem-per-cpu: 5000
+
+Step5d_AlignReadsToReference:
+    time: 05:00:00
+    job-name:  Step5c
+    cpus-per-task: 20
+    mem-per-cpu: 5000
+    
+Step5d_SamToSortedBamGenome:
+    time: 01:00:00
+    job-name:  Step5d
+    cpus-per-task: 20
+    mem-per-cpu: 5000
+
+Step5e_SamToSortedBamClusters:
+    time: 01:00:00
+    job-name:  Step5e
+    cpus-per-task: 20
+    mem-per-cpu: 5000
+
+Step5f_SortedBamToMpileup:
+    time: 01:00:00
+    job-name:  Step5f
+    cpus-per-task: 20
+    mem-per-cpu: 5000
+
+Step5g_AlignmentStatsGenome:
+    time: 01:00:00
+    job-name:  Step5g
+    cpus-per-task: 20
+    mem-per-cpu: 5000
+
+Step5h_AlignmentStatsClusters:
+    time: 01:00:00
+    job-name:  Step5h
+    cpus-per-task: 20
+    mem-per-cpu: 5000
+
+# Step 6 Server definitions
+################################################################################
+
+ParseMpileup_createCountFiles:
+    time: 05:00:00
+    job-name:  createCountFiles
+    cpus-per-task: 1
+    mem-per-cpu: 16000
+
+ParseMpileup_createCountFiles_reference:
+    time: 05:00:00
+    job-name:  createCountFiles_reference
+    cpus-per-task: 1
+    mem-per-cpu: 16000
+
+create_verticalRef:
+    time: 01:00:00
+    job-name:  create_verticalRef
+    cpus-per-task: 1
+    mem-per-cpu: 16000
+    nvme: 20
+
+create_verticalRef_reference:
+    time: 01:00:00
+    job-name:  create_verticalRef_reference
+    cpus-per-task: 1
+    mem-per-cpu: 16000
+    nvme: 20
+
+cut_verticalRef:
+    job-name: cut_verticalRef
+    
+cut_verticalRef_reference:
+    job-name: cut_verticalRef_reference
+    
+create_MasterMatrix_parallel:
+    time: 0-12:00:00
+    job-name:  create_MasterMatrix_parallel
+    cpus-per-task: 1
+    mem-per-cpu: 64000
+    nvme: 20
+
+create_MasterMatrix_parallel_reference:
+    time: 0-12:00:00
+    job-name:  create_MasterMatrix_parallel_reference
+    cpus-per-task: 1
+    mem-per-cpu: 64000
+    nvme: 20
+
+aggregate_MasterMatrix:
+    job-name: aggregate_MasterMatrix
+    time: 0-12:00:00
+    mem-per-cpu: 48000
+    nvme: 20
+    
+aggregate_MasterMatrix_reference:
+    job-name: aggregate_MasterMatrix_reference
+    time: 0-12:00:00
+    mem-per-cpu: 48000
+    nvme: 20
+    
+# Step 7 server definitions
+################################################################################
+
+Step7_0_FilterVariants_reference:
+    time: 1-12:00:00
+    job-name:  filterVariants_reference
+    cpus-per-task: 1
+    mem-per-cpu: 30000
+
+Step7_FilterVariants:
+    time: 1-12:00:00
+    job-name:  filterVariants
+    cpus-per-task: 1
+    mem-per-cpu: 30000
+
+Step8_0_CreateVCF_reference:
+    time: 01:00:00
+    job-name:  Step8_0
+    cpus-per-task: 1
+    mem-per-cpu: 30000
+
+Step8_CreateVCF:
+    time: 01:00:00
+    job-name:  Step8
+    cpus-per-task: 1
+    mem-per-cpu: 30000
+
+Step9_0_getVariantFlanking_reference  :
+    time: 02:00:00
+    job-name:  getVariantFlanking_reference
+    
+Step9_getVariantFlanking:
+    time: 05:00:00
+    job-name:  getVariantFlanking
+
+Step9_alignMockFlankingToReference:
+    job-name:  Step9_alignMockFlankingToReference
+    cpus-per-task: 20
+    mem-per-cpu: 5000
+
+Step9_SamToSortedBam_MockFlankingToReference:
+    job-name:  Step9_SamToSortedBam_MockFlankingToReference
+    cpus-per-task: 20
+    mem-per-cpu: 1000
+
+bash_filter_softclipped_fastq:
+    nvme: 20
+    
+picard_markDuplicates:
+    job-name: markDuplicates
+    time: 02:00:00
+    nvme: 20  
+      
+R_finalReport:
+    time: 0-12:00:00
+    job-name: Rreport
+    mem-per-cpu: 80000

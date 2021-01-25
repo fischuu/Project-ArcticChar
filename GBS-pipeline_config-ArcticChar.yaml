@@ -1,0 +1,104 @@
+# WARNING!!!!! IT SEEMS THE ORDER OF THE OPTIONS MATTERS!!!! CHECK IF THEY MATCH BETWEEN THE SCRIPTS AND THE TOOL!!!!
+
+# absolute path to the project folder
+project-folder: "/scratch/project_2003491/ArcticChar"
+pipeline-folder: "/scratch/project_2003491/Pipeline-GBS"
+pipeline-config: "/scratch/project_2003491/ArcticChar/GBS-pipeline_config-ArcticChar.yaml"
+report-script: "/scratch/project_2003491/Pipeline-GBS/scripts/workflow-report.Rmd"
+barcodes: "/scratch/project_2003491/ArcticChar/barcodesID.txt"
+rawsamples: "/scratch/project_2003491/ArcticChar/rawsamples"
+genome: "/scratch/project_2003491/ArcticChar/references/GCA_002910315.2_ASM291031v2_genomic.fna"
+genome-bwa-index: "/scratch/project_2003491/ArcticChar/references/GCA_002910315.2_ASM291031v2_genomic.fna.bwt"
+genome-star-index:  "/scratch/project_2003491/ArcticChar/references/STAR2.7.3a"
+refsample: "A_charr_2019_354"
+local-scratch: $LOCAL_SCRATCH
+adapter: "/scratch/project_2003491/Pipeline-GBS/adapter.fa"
+
+# Parameters for the GBS-SNP-CROP tools
+enz1: "AATTC"
+enz2: "GCATG"
+libname: "AllReads"
+libtype: "PE"
+
+params:
+  cutadapt:
+    adapter_R1: "CAATTC"
+    adapter_R2: "GCATG"
+  step1:
+    start: 1
+    end: 1
+    threads: 10
+  step2:
+    tm: "trimmomatic"
+    threads: 20
+    minlen: 32
+    iclip: "2:30:12"
+    leading: 30                        # Hard quality cut-off 
+    slwin: "8:30"                      # Sliding window trimming (windowSize:quality). Default is 4:30.
+    trail: 30                          # Hard quality cut-off
+  step2b:
+    q: 20                              # Quality threshold - nucleotides with lower quality will be masked. Default is 10.
+  step4:
+    pear: "pear"
+    vsearch: "vsearch"
+    threads: 20
+    cl: "consout"
+    rl: 100   # THIS IS USED FOR STITCHING!!! READS ARE ONLY STITCHED IF length(R1)-19 > rl and length(R2)-5 > rl, rather aggressive and almost impossible AFTER trimming!!! 
+    pl: 32
+    p: 0.01
+    id: 0.93
+    db: 1   # WARNING!!!!! ADD HERE THE LENGTH OF THE SAMPLES VECTOR, THIS MUST NOT BE HARDCODED IN PRODUCTION!!!!
+    min: 32
+    MR: "GSC.MR"
+  step5:
+    bwa: "bwa"
+    samtools: "samtools"
+    threads: 20
+    Q: 30
+    q: 0    # WARNING!!! RETURN THIS BACK TO DEFAULT FOR PRODUCTION!!! ALSO, CHECK ALL OTHER SETTINGS!!!!
+    f: 0
+    F: 2308
+  step5b:
+    threads: 20
+  step5c:
+    threads: 20
+  step5d:
+    threads: 20
+    q: 0
+    Q: 30
+    f: 0
+    F: 2308
+  step5e:
+    threads: 20
+    q: 0
+    Q: 30
+    f: 0
+    F: 2308
+  step5f:
+    threads: 20
+    q: 0
+    Q: 30
+  step6:
+    masterMatrix: "GSC.MasterMatrix.txt"
+    masterMatrixRef: "GSC.MasterMatrix_reference.txt"
+    p: "snp"
+  step7:
+    input: "GSC.MasterMatrix.txt"
+    out: "GSC.GenoMatrix.txt"
+    unfiltered: "GSC.GenoMatrix.unfiltered.txt"
+    p: "snp"
+    mnHoDepth0: 5
+    mnHoDepth1: 20
+    mnHetDepth: 3
+    altStrength: 0.8
+    mnAlleleRatio: 0.25
+    mnCall: 0.75
+    mnAvgDepth: 3
+    mxAvgDepth: 200
+  step8:
+    genoMatrix: "GSC.GenoMatrix.txt"
+    out: "GSC"
+    unfiltered: "GSC.unfiltered"
+    format: "V"
+  step9:
+    flanking: 25
